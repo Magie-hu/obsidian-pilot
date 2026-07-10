@@ -10,14 +10,12 @@ export default class ObsidianPilotPlugin extends Plugin {
   private apiUrl = 'http://localhost:8080';
 
   async onload() {
-    console.log('Loading Obsidian Pilot plugin...');
+    console.log('Loading Pilot Assistant plugin...');
 
-    // Add ribbon icon
-    this.addRibbonIcon('book-open', 'Obsidian Pilot', () => {
+    this.addRibbonIcon('book-open', 'Pilot Assistant', () => {
       this.openModal();
     });
 
-    // Add command
     this.addCommand({
       id: 'open-pilot-panel',
       name: 'Open Pilot Panel',
@@ -26,7 +24,7 @@ export default class ObsidianPilotPlugin extends Plugin {
       }
     });
 
-    console.log('Obsidian Pilot plugin loaded.');
+    console.log('Pilot Assistant plugin loaded.');
   }
 
   async openModal() {

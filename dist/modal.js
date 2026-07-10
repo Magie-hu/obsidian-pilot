@@ -67,8 +67,18 @@ var PilotModal = class extends import_obsidian.Modal {
           this.showResult(result);
           new import_obsidian.Notice(`\u2705 ${label} completed`);
         } catch (error) {
-          this.showResult({ error: `Connection failed. Is API running on ${this.apiUrl}?` });
-          new import_obsidian.Notice(`\u274C ${label} failed`);
+          const msg = `API \u672A\u8FDE\u63A5 (${this.apiUrl})
+
+\u8BF7\u5148\u542F\u52A8 API \u540E\u7AEF\uFF1A
+
+1. \u5B89\u88C5\u4F9D\u8D56\uFF1Apip install fastapi uvicorn
+2. \u542F\u52A8\u670D\u52A1\uFF1A
+   cd obsidian-pilot-api
+   uvicorn obsidian_pilot_api.main:app --port 8080
+
+3. \u786E\u4FDD API \u8FD4\u56DE http://${this.apiUrl}/health`;
+          this.showResult({ error: msg });
+          new import_obsidian.Notice(`\u274C ${label} - \u8BF7\u5148\u542F\u52A8 API`);
         } finally {
           btn.disabled = false;
           btn.setText(label);

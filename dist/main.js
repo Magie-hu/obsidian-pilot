@@ -30,8 +30,8 @@ var ObsidianPilotPlugin = class extends import_obsidian.Plugin {
     this.apiUrl = "http://localhost:8080";
   }
   async onload() {
-    console.log("Loading Obsidian Pilot plugin...");
-    this.addRibbonIcon("book-open", "Obsidian Pilot", () => {
+    console.log("Loading Pilot Assistant plugin...");
+    this.addRibbonIcon("book-open", "Pilot Assistant", () => {
       this.openModal();
     });
     this.addCommand({
@@ -41,7 +41,7 @@ var ObsidianPilotPlugin = class extends import_obsidian.Plugin {
         this.openModal();
       }
     });
-    console.log("Obsidian Pilot plugin loaded.");
+    console.log("Pilot Assistant plugin loaded.");
   }
   async openModal() {
     const modal = new PilotModal(this.app, this.apiUrl);

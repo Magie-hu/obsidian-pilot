@@ -58,8 +58,9 @@ export class PilotModal extends Modal {
           this.showResult(result);
           new Notice(`✅ ${label} completed`);
         } catch (error) {
-          this.showResult({ error: `Connection failed. Is API running on ${this.apiUrl}?` });
-          new Notice(`❌ ${label} failed`);
+          const msg = `API 未连接 (${this.apiUrl})\n\n请先启动 API 后端：\n\n1. 安装依赖：pip install fastapi uvicorn\n2. 启动服务：\n   cd obsidian-pilot-api\n   uvicorn obsidian_pilot_api.main:app --port 8080\n\n3. 确保 API 返回 http://${this.apiUrl}/health`;
+          this.showResult({ error: msg });
+          new Notice(`❌ ${label} - 请先启动 API`);
         } finally {
           btn.disabled = false;
           btn.setText(label);
