@@ -1,69 +1,67 @@
 /* Obsidian Pilot Plugin Styles */
 
-.pilot-btn {
-    display: block;
-    width: 100%;
-    padding: 10px 16px;
-    margin: 6px 0;
-    background: var(--background-secondary);
-    color: var(--text-normal);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: left;
-    transition: background 0.15s;
+.pilot-modal-header {
+    border-bottom: 1px solid var(--background-modifier-border);
+    padding-bottom: 12px;
+    margin-bottom: 16px;
 }
 
-.pilot-btn:hover {
-    background: var(--background-modifier-hover);
-    border-color: var(--interactive-accent);
+.pilot-modal-header h2 {
+    margin: 0 0 4px 0;
+    font-size: 1.4em;
 }
 
-.pilot-btn:disabled {
-    opacity: 0.6;
-    cursor: wait;
-}
-
-.status-bar {
-    padding: 8px 12px;
-    margin-bottom: 12px;
-    background: var(--background-primary);
-    border-radius: 4px;
-    font-size: 13px;
-    border-left: 3px solid var(--interactive-accent);
-}
-
-.vault-path {
-    padding: 8px 12px;
-    margin-bottom: 12px;
-    background: var(--background-primary);
-    border-radius: 4px;
-    font-size: 12px;
+.pilot-modal-header small {
     color: var(--text-muted);
 }
 
-.btn-grid {
+.pilot-btn-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-bottom: 16px;
 }
 
-@media (max-width: 400px) {
-    .btn-grid {
-        grid-template-columns: 1fr;
-    }
+.pilot-btn {
+    padding: 10px 12px;
+    background: var(--background-secondary);
+    color: var(--text-normal);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.2s;
 }
 
-.result-area {
-    padding: 12px;
+.pilot-btn:hover {
+    background: var(--background-modifier-hover);
+}
+
+.pilot-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pilot-result-area {
+    border-top: 1px solid var(--background-modifier-border);
+    padding-top: 12px;
+}
+
+.pilot-result-area h3 {
+    margin: 0 0 8px 0;
+    font-size: 1em;
+}
+
+.pilot-result-content {
     background: var(--background-primary-alt);
-    border-radius: 6px;
-    font-size: 12px;
-    color: var(--text-muted);
-    white-space: pre-wrap;
-    max-height: 300px;
+    padding: 12px;
+    border-radius: 4px;
+    max-height: 200px;
     overflow-y: auto;
-    border: 1px solid var(--border-color);
+    font-size: 0.85em;
+    line-height: 1.5;
+}
+
+.pilot-error {
+    color: var(--text-error);
 }
