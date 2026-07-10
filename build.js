@@ -1,30 +1,60 @@
+#!/usr/bin/env node
 /**
- * Obsidian LLM-Wiki Plugin - Build Script
- * Compiles TypeScript to JavaScript for Obsidian
+ * Build script for Obsidian Pilot Plugin
+ * Compiles TypeScript to JavaScript using esbuild
  */
 
+const { build } = require('esbuild');
 const fs = require('fs');
 const path = require('path');
 
-const SRC_DIR = path.join(__dirname, 'src');
-const OUT_DIR = path.join(__dirname, 'src');
+async function buildPlugin() {
+    console.log('Building Obsidian Pilot Plugin...');
 
-// Simple TypeScript to JavaScript compilation
-// In production, use tsc or esbuild
+    const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+    const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
-console.log('Building Obsidian LLM-Wiki Plugin...');
-console.log('Source:', SRC_DIR);
-console.log('Output:', OUT_DIR);
+    // Clean dist
+    const distDir = path.join(__dirname, 'dist');
+    if (fs.existsSync(distDir)) {
+        fs.rmSync(distDir, { recursive: true });
+    }
+    fs.mkdirSync(distDir);
 
-// Copy manifest.json
-const manifestSrc = path.join(__dirname, 'manifest.json');
-const manifestDst = path.join(OUT_DIR, '..', 'manifest.json');
-if (fs.existsSync(manifestSrc)) {
-    fs.copyFileSync(manifestSrc, manifestDst);
-    console.log('✓ Copied manifest.json');
+    // Build main.ts
+    await build({
+        entryPoints: ['main.ts'],
+        bundle: true,
+        outfile: 'dist/main.js',
+        external: ['obsidian'],
+        format: 'cjs',
+        target: 'es2020',
+        platform: 'node',
+        logLevel: 'info',
+    });
+
+    // Build modal.ts
+    await build({
+        entryPoints: ['modal.ts'],
+        bundle: true,
+        outfile: 'dist/modal.js',
+        external: ['obsidian'],
+        format: 'cjs',
+        target: 'es2020',
+        platform: 'node',
+        logLevel: 'info',
+    });
+
+    // Copy manifest.json and styles.css
+    fs.copyFileSync('manifest.json', 'dist/manifest.json');
+    fs.copyFileSync('styles.css', 'dist/styles.css');
+
+    console.log('Build complete! Output in dist/');
+    console.log('Files:');
+    fs.readdirSync('dist').forEach(f => console.log(`  - ${f}`));
 }
 
-console.log('Build complete!');
-console.log('Next steps:');
-console.log('1. Copy main.js, manifest.json, styles.css to your Obsidian vault/.obsidian/plugins/obsidian-llm-wiki-plugin/');
-console.log('2. Enable the plugin in Obsidian settings');
+buildPlugin().catch(err => {
+    console.error('Build failed:', err);
+    process.exit(1);
+});

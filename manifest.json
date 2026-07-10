@@ -1,14 +1,14 @@
 {
-  "id": "obsidian-llm-wiki",
-  "name": "LLM-Wiki Bridge",
+  "id": "obsidian-pilot",
+  "name": "Obsidian Pilot",
   "version": "0.1.0",
   "minAppVersion": "1.5.0",
-  "description": "Bidirectional bridge between LLM-Wiki and Obsidian. Initialize vaults, import notes, automate links, and more.",
+  "description": "Your First Obsidian Assistant - Initialize vaults, classify notes, automate links, and more.",
   "author": "NingXiaoBan",
   "authorUrl": "https://ningxiaoban.tech",
   "fundingUrl": {
-    "GitHub Sponsors": "https://github.com/sponsors/yourusername",
+    "GitHub Sponsors": "https://github.com/sponsors/Magie-hu",
     "Afdian": "https://afdian.com/a/ningxiaoban"
   },
-  "isDesktopOnly": false
+  "isDesktopOnly": true
 }
