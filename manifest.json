@@ -1,9 +1,9 @@
 {
-  "id": "obsidian-pilot",
-  "name": "Obsidian Pilot",
-  "version": "0.1.0",
-  "minAppVersion": "1.5.0",
-  "description": "Your First Obsidian Assistant - Initialize vaults, classify notes, automate links, and more.",
+  "id": "pilot-assistant",
+  "name": "Pilot Assistant",
+  "version": "1.0.0",
+  "minAppVersion": "1.6.0",
+  "description": "Initialize vaults, classify notes, automate links, and more. Your first Obsidian assistant.",
   "author": "NingXiaoBan",
   "authorUrl": "https://ningxiaoban.tech",
   "fundingUrl": {

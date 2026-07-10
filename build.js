@@ -9,52 +9,54 @@ const fs = require('fs');
 const path = require('path');
 
 async function buildPlugin() {
-    console.log('Building Obsidian Pilot Plugin...');
+  console.log('Building Obsidian Pilot Plugin...\n');
 
-    const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
-    const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+  // Ensure dist directory exists
+  const distDir = path.join(__dirname, 'dist');
+  if (!fs.existsSync(distDir)) {
+    fs.mkdirSync(distDir, { recursive: true });
+  }
 
-    // Clean dist
-    const distDir = path.join(__dirname, 'dist');
-    if (fs.existsSync(distDir)) {
-        fs.rmSync(distDir, { recursive: true });
-    }
-    fs.mkdirSync(distDir);
+  // Build main.js
+  await build({
+    entryPoints: [path.join(__dirname, 'main.ts')],
+    bundle: true,
+    outfile: path.join(distDir, 'main.js'),
+    platform: 'browser',
+    target: 'es2020',
+    format: 'cjs',
+    external: ['obsidian'],
+    logLevel: 'info',
+  });
 
-    // Build main.ts
-    await build({
-        entryPoints: ['main.ts'],
-        bundle: true,
-        outfile: 'dist/main.js',
-        external: ['obsidian'],
-        format: 'cjs',
-        target: 'es2020',
-        platform: 'node',
-        logLevel: 'info',
-    });
+  // Build modal.js
+  await build({
+    entryPoints: [path.join(__dirname, 'modal.ts')],
+    bundle: true,
+    outfile: path.join(distDir, 'modal.js'),
+    platform: 'browser',
+    target: 'es2020',
+    format: 'cjs',
+    external: ['obsidian'],
+    logLevel: 'info',
+  });
 
-    // Build modal.ts
-    await build({
-        entryPoints: ['modal.ts'],
-        bundle: true,
-        outfile: 'dist/modal.js',
-        external: ['obsidian'],
-        format: 'cjs',
-        target: 'es2020',
-        platform: 'node',
-        logLevel: 'info',
-    });
+  // Copy manifest and styles to dist
+  fs.copyFileSync(
+    path.join(__dirname, 'manifest.json'),
+    path.join(distDir, 'manifest.json')
+  );
+  fs.copyFileSync(
+    path.join(__dirname, 'styles.css'),
+    path.join(distDir, 'styles.css')
+  );
 
-    // Copy manifest.json and styles.css
-    fs.copyFileSync('manifest.json', 'dist/manifest.json');
-    fs.copyFileSync('styles.css', 'dist/styles.css');
-
-    console.log('Build complete! Output in dist/');
-    console.log('Files:');
-    fs.readdirSync('dist').forEach(f => console.log(`  - ${f}`));
+  console.log('\nBuild complete! Output in dist/');
+  console.log('Files:');
+  console.log('  - main.js');
+  console.log('  - modal.js');
+  console.log('  - manifest.json');
+  console.log('  - styles.css');
 }
 
-buildPlugin().catch(err => {
-    console.error('Build failed:', err);
-    process.exit(1);
-});
+buildPlugin().catch(console.error);
