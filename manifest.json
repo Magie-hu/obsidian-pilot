@@ -1,0 +1,14 @@
+{
+  "id": "obsidian-llm-wiki",
+  "name": "LLM-Wiki Bridge",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Bidirectional bridge between LLM-Wiki and Obsidian. Initialize vaults, import notes, automate links, and more.",
+  "author": "NingXiaoBan",
+  "authorUrl": "https://ningxiaoban.tech",
+  "fundingUrl": {
+    "GitHub Sponsors": "https://github.com/sponsors/yourusername",
+    "Afdian": "https://afdian.com/a/ningxiaoban"
+  },
+  "isDesktopOnly": false
+}

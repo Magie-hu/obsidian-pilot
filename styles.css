@@ -1,0 +1,55 @@
+/* Obsidian LLM-Wiki Plugin Styles */
+
+.llm-wiki-panel {
+    padding: 10px;
+}
+
+.llm-wiki-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+}
+
+.llm-wiki-btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.llm-wiki-btn {
+    padding: 8px 12px;
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.llm-wiki-btn:hover {
+    background: var(--interactive-accent-hover);
+}
+
+.llm-wiki-status {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.llm-wiki-status.success {
+    background: rgba(46, 160, 67, 0.15);
+    border: 1px solid rgba(46, 160, 67, 0.3);
+    color: var(--text-success);
+}
+
+.llm-wiki-status.error {
+    background: rgba(204, 0, 0, 0.15);
+    border: 1px solid rgba(204, 0, 0, 0.3);
+    color: var(--text-error);
+}
