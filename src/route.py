@@ -51,53 +51,42 @@ AI_ASSISTANTS = {
 def build_knowledge_graph(vault_path):
     """Build a knowledge graph from notes using TF-IDF similarity."""
     if not HAS_NETWORKX or not HAS_SKLEARN:
-        print("Warning: networkx or sklearn not installed. Using basic linking.")
-        return None
-    
-    vault = Path(vault_path).resolve()
-    md_files = list(vault.rglob('*.md'))
-    
-    # Collect all note texts
-    notes = []
-    for md_file in md_files:
-        if md_file.name.startswith('.') or '_templates' in str(md_file):
-            continue
-        try:
-            content = md_file.read_text(encoding='utf-8')
-            if len(content.strip()) > 100:  # Skip very short notes
-                notes.append({
-                    'file': md_file,
-                    'title': md_file.stem,
-                    'content': content,
-                })
-        except:
-            pass
-    
-    if not notes:
-        return None
-    
-    # Build TF-IDF matrix
-    texts = [n['content'] for n in notes]
-    vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
-    tfidf_matrix = vectorizer.fit_transform(texts)
-    
-    # Compute similarity
-    similarity_matrix = cosine_similarity(tfidf_matrix)
-    
-    # Build graph
-    G = nx.DiGraph()
-    for i, note in enumerate(notes):
-        G.add_node(note['title'], file=str(note['file']), content=note['content'])
+        # Fallback: simple title-based graph
+        vault = Path(vault_path).resolve()
+        G = None
+        if HAS_NETWORKX:
+            G = nx.DiGraph()
+        notes = []
+        for md_file in vault.rglob('*.md'):
+            if md_file.name.startswith('.') or '_templates' in str(md_file):
+                continue
+            try:
+                content = md_file.read_text(encoding='utf-8')
+                if len(content.strip()) > 100:
+                    notes.append({
+                        'file': md_file,
+                        'title': md_file.stem,
+                        'content': content,
+                    })
+            except:
+                pass
         
-        # Find top 3 similar notes
-        similarities = similarity_matrix[i]
-        top_indices = similarities.argsort()[::-1][1:4]  # Skip self
+        if not notes:
+            return None
         
-        for j in top_indices:
-            if similarities[j] > 0.3:  # Threshold for linking
-                G.add_edge(note['title'], notes[j]['title'], weight=similarities[j])
-    
-    return G
+        # Simple keyword overlap instead of TF-IDF
+        if HAS_NETWORKX:
+            for i, note_a in enumerate(notes):
+                G.add_node(note_a['title'], file=str(note_a['file']))
+                words_a = set(note_a['content'].lower().split())
+                for j, note_b in enumerate(notes):
+                    if i >= j:
+                        continue
+                    words_b = set(note_b['content'].lower().split())
+                    overlap = len(words_a & words_b)
+                    if overlap > 5:  # At least 5 shared words
+                        G.add_edge(note_a['title'], note_b['title'], weight=overlap)
+        return G
 
 
 def compress_context(vault_path, query, max_tokens=500):

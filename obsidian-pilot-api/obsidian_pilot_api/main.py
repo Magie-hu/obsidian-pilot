@@ -71,11 +71,20 @@ class ScanResponse(BaseModel):
     category_counts: dict
     uncategorized: List[str]
     results: List[dict]
-
 class LinkReportResponse(BaseModel):
     missing_links: List[dict]
     isolated_notes: List[dict]
     total_notes: int
+
+
+class ApplyResponse(BaseModel):
+    status: str
+    updated: int
+
+
+class HealthResponse(BaseModel):
+    status: str
+
 
 class RouteResponse(BaseModel):
     recommended_model: str
@@ -149,13 +158,13 @@ async def import_notes(request: VaultRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/import/apply")
+@app.post("/import/apply", response_model=ApplyResponse)
 async def apply_import(request: VaultRequest):
     """Apply note classification changes."""
     try:
         results, _, _ = scan_notes(request.vault_path, dry_run=False)
         updated = apply_changes(request.vault_path, results)
-        return {"status": "success", "updated": updated}
+        return ApplyResponse(status="success", updated=updated)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -196,7 +205,7 @@ async def get_link_report(request: LinkRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/links/apply")
+@app.post("/links/apply", response_model=ApplyResponse)
 async def apply_links(request: LinkRequest):
     """Apply link suggestions."""
     try:
@@ -235,7 +244,7 @@ async def apply_links(request: LinkRequest):
                 except:
                     pass
         
-        return {"status": "success", "updated": updated}
+        return ApplyResponse(status="success", updated=updated)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -297,10 +306,10 @@ async def run_maintenance(request: MaintainRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/health")
+@app.get("/health", response_model=HealthResponse)
 async def health_check():
     """Health check endpoint."""
-    return {"status": "healthy"}
+    return HealthResponse(status="healthy")
 
 if __name__ == "__main__":
     import uvicorn
