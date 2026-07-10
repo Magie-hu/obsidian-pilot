@@ -2,4 +2,4 @@
 
 __version__ = "0.1.0"
 __author__ = "NingXiaoBan"
-__email__ = "ningxiaoban@ningxiaoban.tech"
+__email__ = "18607570527tong@gmail.com"

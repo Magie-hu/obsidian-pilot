@@ -9,7 +9,7 @@ description = "Your First Obsidian Assistant - AI-powered note organization and 
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "NingXiaoBan", email = "ningxiaoban@ningxiaoban.tech"}
+    {name = "NingXiaoBan", email = "18607570527tong@gmail.com"}
 ]
 requires-python = ">=3.11"
 dependencies = [
