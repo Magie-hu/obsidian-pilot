@@ -1,6 +1,6 @@
 {
   "id": "pilot-assistant",
-  "name": "Obsidian Pilot",
+  "name": "Pilot Assistant",
   "version": "1.0.0",
   "minAppVersion": "1.6.0",
   "description": "Initialize vaults, classify notes, automate links, and more. Your first Obsidian assistant.",
