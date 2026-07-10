@@ -10,7 +10,6 @@ from collections import Counter
 
 # Days before marking as expired
 EXPIRY_DAYS = 30
-DAILY_DIGEST_DAYS = 7
 
 # Patterns for detecting daily notes
 DAILY_PATTERNS = [
