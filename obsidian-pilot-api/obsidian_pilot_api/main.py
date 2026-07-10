@@ -8,8 +8,20 @@ from typing import Optional, List
 from pathlib import Path
 import sys
 
-# Add project root to path
-project_root = Path(__file__).parent.parent.parent / "obsidian pilot" / "src"
+# Add project root to path - support multiple directory structures
+def find_project_root():
+    """Try multiple paths to find the src directory."""
+    candidates = [
+        Path(__file__).parent.parent.parent / "src",
+        Path(__file__).parent.parent / "src",
+        Path(__file__).parent.parent.parent.parent / "src",
+    ]
+    for candidate in candidates:
+        if candidate.exists() and (candidate / "init.py").exists():
+            return candidate
+    return Path.cwd() / "src"
+
+project_root = find_project_root()
 sys.path.insert(0, str(project_root))
 
 from init import create_folder_structure, create_templates, create_index_page, FOLDER_TEMPLATES
