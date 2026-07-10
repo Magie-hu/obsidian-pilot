@@ -28,10 +28,10 @@ classifiers = [
 keywords = ["obsidian", "note-taking", "knowledge-management", "ai-assistant"]
 
 [project.scripts]
-obsidian-pilot = "src.main:main"
+obsidian-pilot = "obsidian_pilot_cli.__main__:main"
 
 [tool.setuptools.packages.find]
-include = ["src*"]
+include = ["src*", "obsidian_pilot_api*", "obsidian_pilot_cli*"]
 
 [tool.black]
 line-length = 100
