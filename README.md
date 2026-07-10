@@ -1,96 +1,60 @@
-# Obsidian Pilot
+# Obsidian Pilot Plugin
 
-> Your First Obsidian Assistant - Bidirectional bridge between LLM-Wiki and Obsidian
+> Your First Obsidian Assistant - 一个简洁易用的 Obsidian 插件，配合后端 API 使用。
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://github.com/yourusername/obsidian-pilot/actions/workflows/test.yml/badge.svg)](https://github.com/yourusername/obsidian-pilot/actions)
+## 安装
 
-## Overview
+### 前提条件
 
-Obsidian Pilot is a lightweight, modular toolkit designed to bridge the gap between
-LLM-Wiki (Karpathy's LLM knowledge base standard) and Obsidian, making it easy to
-build, maintain, and leverage AI-ready knowledge bases.
+1. 安装 [Obsidian](https://obsidian.md)
+2. 启动 API 后端服务：
+   ```bash
+   cd obsidian-pilot-api
+   ./venv/bin/python -m uvicorn obsidian_pilot_api.main:app
+   ```
 
-## Features
+### 安装插件
 
-- **One-click Vault Initialization** — LLM-Wiki standard folder structure
-- **Smart Note Classification** — Auto-categorize notes by content and tags
-- **Bidirectional Link Automation** — Find missing links, detect isolated notes
-- **AI Assistant Routing** — Route queries to the right AI model based on content
-- **Vault Maintenance** — Find expired, duplicate, and orphaned notes
-- **Interactive Wizard** — Step-by-step guided setup for new users
-- **Extensible Plugin Architecture** — Easy to add new modules
+1. 从 [GitHub Releases](https://github.com/Magie-hu/obsidian-pilot/releases) 下载最新版本的 zip 文件
+2. 在 Obsidian 中：设置 → 第三方插件 → 加载离线插件 → 选择解压后的文件夹
+3. 启用插件
 
-## Quick Start
+### 手动编译安装
+
+如果你有 TypeScript 环境：
+```bash
+cd obsidian-llm-wiki-plugin
+npm install
+node build.js
+# 将 dist/ 文件夹复制到 Obsidian 的 .obsidian/plugins/obsidian-pilot/
+```
+
+## 功能
+
+| 功能 | 说明 |
+|------|------|
+| 📁 初始化知识库 | 一键创建 LLM-Wiki 标准目录结构 |
+| 📥 导入分类 | 扫描所有笔记并按内容分类 |
+| 🔗 自动链接 | 分析笔记间的链接关系，发现孤立笔记 |
+| 🤖 AI 路由 | 根据问题推荐合适的 AI 模型 |
+| 🧹 日常维护 | 检查过期笔记、重复标题、孤立链接 |
+| 📊 链接报告 | 详细的链接分析报告 |
+
+## 使用流程
+
+1. 打开 Obsidian，选择一个 vault
+2. 点击侧边栏的书本图标 📖
+3. 弹出面板显示所有功能按钮
+4. 点击按钮执行操作，结果在面板底部显示
+
+## 开发
 
 ```bash
-# Install
-pip install obsidian-pilot
-
-# Initialize a new vault
-obsidian-pilot init /path/to/vault
-
-# Classify notes
-obsidian-pilot import /path/to/vault
-
-# Automate links
-obsidian-pilot link /path/to/vault
-
-# Route a query
-obsidian-pilot route "How do I set up a new vault?"
+npm install        # 安装依赖
+node build.js      # 编译
+node build.js --watch  # 开发模式（监听变化）
 ```
 
-## Architecture
+## 许可证
 
-```
-obsidian-pilot/
-├── src/
-│   ├── init.py          # Vault initialization
-│   ├── note_import.py   # Note classification & import
-│   ├── link.py          # Link automation
-│   ├── route.py         # AI routing
-│   ├── maintain.py      # Vault maintenance
-│   ├── main.py          # CLI entry point
-│   └── wizard.py        # Interactive setup
-├── tests/
-│   ├── test_init.py
-│   ├── test_import.py
-│   ├── test_link.py
-│   ├── test_route.py
-│   └── test_maintain.py
-├── pyproject.toml
-└── README.md
-```
-
-## Installation
-
-```bash
-# From PyPI (when published)
-pip install obsidian-pilot
-
-# From source
-git clone https://github.com/Magie-hu/obsidian-pilot.git
-cd obsidian-pilot
-pip install -e .
-```
-
-## Requirements
-
-- Python 3.11+
-- No heavy dependencies (uses only standard library + argparse)
-- Works on Windows, macOS, and Linux
-
-## License
-
-MIT License - see LICENSE file for details
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Acknowledgments
-
-- Inspired by Andrej Karpathy's [LLM-Wiki](https://github.com/karpathy/llm-wiki) standard
-- Built for the Obsidian and LLM-Wiki communities
-- Special thanks to all contributors
+MIT License - Copyright (c) 2026 NingXiaoBan

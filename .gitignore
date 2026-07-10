@@ -1,24 +1,4 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-dist/
-build/
-venv/
-.env
-
-# Node
 node_modules/
-*.js.map
-
-# Obsidian plugin (compiled output)
-main.js
-modal.js
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Secrets
-*.pem
-*.key
+dist/
+*.js
+!.gitignore
