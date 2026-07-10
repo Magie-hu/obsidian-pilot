@@ -14,7 +14,6 @@ node_modules/
 # Obsidian plugin (compiled output)
 main.js
 modal.js
-dist/
 
 # OS
 .DS_Store

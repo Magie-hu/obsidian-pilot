@@ -8,135 +8,89 @@
 
 ## Overview
 
-Obsidian Pilot is a bidirectional bridge between [Karpathy's LLM-Wiki](https://github.com/karpathy/llm-wiki) and Obsidian. It helps developers and Obsidian power users organize their AI knowledge base automatically.
-
-**Perfect for:**
-- Developers using Hermes/Codex for local AI knowledge bases
-- Obsidian double-link power users who want AI to auto-organize notes
+Obsidian Pilot is a lightweight, modular toolkit designed to bridge the gap between
+LLM-Wiki (Karpathy's LLM knowledge base standard) and Obsidian, making it easy to
+build, maintain, and leverage AI-ready knowledge bases.
 
 ## Features
 
-- **LLM-Wiki Standard** — Auto-initialize `raw/`, `wiki/`, `attachments/`, `scripts/` directories
-- **Note Import & Classification** — Auto-classify notes into raw/wiki/attachment/script
-- **Bidirectional Links** — Generate `[[double-links]]` between related wiki entries
-- **Template Engine** — LLM-Wiki compatible templates for raw materials and wiki entries
-- **Smart Routing** — Route queries to local knowledge or AI assistants
-
-## Installation
-
-### From Source
-
-```bash
-git clone https://github.com/yourusername/obsidian-pilot.git
-cd obsidian-pilot
-pip install -e .
-```
+- **One-click Vault Initialization** — LLM-Wiki standard folder structure
+- **Smart Note Classification** — Auto-categorize notes by content and tags
+- **Bidirectional Link Automation** — Find missing links, detect isolated notes
+- **AI Assistant Routing** — Route queries to the right AI model based on content
+- **Vault Maintenance** — Find expired, duplicate, and orphaned notes
+- **Interactive Wizard** — Step-by-step guided setup for new users
+- **Extensible Plugin Architecture** — Easy to add new modules
 
 ## Quick Start
 
 ```bash
-# Initialize LLM-Wiki standard vault
-obsidian-pilot init /path/to/vault -t llm-wiki
+# Install
+pip install obsidian-pilot
 
-# Import and classify notes
-obsidian-pilot import /path/to/vault --dry-run
+# Initialize a new vault
+obsidian-pilot init /path/to/vault
 
-# Apply changes
-obsidian-pilot import /path/to/vault --apply
+# Classify notes
+obsidian-pilot import /path/to/vault
 
 # Automate links
-obsidian-pilot link /path/to/vault --apply
+obsidian-pilot link /path/to/vault
+
+# Route a query
+obsidian-pilot route "How do I set up a new vault?"
 ```
 
-## Directory Structure
+## Architecture
 
 ```
-your-vault/
-├── raw/              # Raw materials awaiting AI processing
-├── wiki/             # Processed wiki entries with [[double-links]]
-├── attachments/      # Media and file attachments
-├── scripts/          # Automation scripts
-├── 00-Index.md       # Master index page
-└── _templates/       # LLM-Wiki templates
-    ├── raw-material.md
-    ├── wiki-entry.md
-    └── index.md
+obsidian-pilot/
+├── src/
+│   ├── init.py          # Vault initialization
+│   ├── note_import.py   # Note classification & import
+│   ├── link.py          # Link automation
+│   ├── route.py         # AI routing
+│   ├── maintain.py      # Vault maintenance
+│   ├── main.py          # CLI entry point
+│   └── wizard.py        # Interactive setup
+├── tests/
+│   ├── test_init.py
+│   ├── test_import.py
+│   ├── test_link.py
+│   ├── test_route.py
+│   └── test_maintain.py
+├── pyproject.toml
+└── README.md
 ```
 
-## Templates
+## Installation
 
-### Raw Material Template
-For imported documents awaiting processing:
-```markdown
----
-tags: [raw, imported]
-date: {{date}}
-source: {{source}}
-status: pending
----
+```bash
+# From PyPI (when published)
+pip install obsidian-pilot
 
-# {{title}}
-
-> Raw material from {{source}}, awaiting processing
-
-## Content
-
-{{content}}
+# From source
+git clone https://github.com/Magie-hu/obsidian-pilot.git
+cd obsidian-pilot
+pip install -e .
 ```
 
-### Wiki Entry Template
-Karpathy LLM-Wiki standard format:
-```markdown
----
-tags: [wiki, entry]
-date: {{date}}
-aliases: [{{aliases}}]
-related: [{{related}}]
-status: published
----
+## Requirements
 
-# {{title}}
-
-## Summary
-
-> One-sentence summary of this concept
-
-## Core Concepts
-
-- Concept 1
-- Concept 2
-
-## Details
-
-{{content}}
-
-## Related
-
-- [[ ]]
-- [[ ]]
-
-## References
-
-- 
-```
-
-## Roadmap
-
-- [x] Phase 1: LLM-Wiki vault initialization
-- [x] Phase 2: Note import & classification
-- [x] Phase 3: Link automation
-- [x] Phase 4: AI routing
-- [x] Phase 5: Daily maintenance
-- [ ] Obsidian plugin version
-- [ ] Desktop GUI
-- [ ] Cloud sync support
+- Python 3.11+
+- No heavy dependencies (uses only standard library + argparse)
+- Works on Windows, macOS, and Linux
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+MIT License - see LICENSE file for details
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Acknowledgments
 
+- Inspired by Andrej Karpathy's [LLM-Wiki](https://github.com/karpathy/llm-wiki) standard
 - Built for the Obsidian and LLM-Wiki communities
-- Inspired by Karpathy's LLM-Wiki standard
 - Special thanks to all contributors
