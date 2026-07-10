@@ -1,0 +1,1 @@
+"""Obsidian Pilot CLI package."""

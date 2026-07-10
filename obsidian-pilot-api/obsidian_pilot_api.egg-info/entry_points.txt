@@ -1,0 +1,3 @@
+[console_scripts]
+obsidian-pilot = obsidian_pilot_cli.__main__:main
+obsidian-pilot-api = obsidian_pilot_api.main:run_server

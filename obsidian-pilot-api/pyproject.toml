@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "obsidian-pilot-api"
@@ -21,7 +21,8 @@ dependencies = [
 ]
 
 [project.scripts]
+obsidian-pilot = "obsidian_pilot_cli.__main__:main"
 obsidian-pilot-api = "obsidian_pilot_api.main:run_server"
 
 [tool.setuptools.packages.find]
-include = ["obsidian_pilot_api*"]
+include = ["obsidian_pilot_api*", "obsidian_pilot_cli*"]

@@ -2,7 +2,7 @@
 Copyright (c) 2026 NingXiaoBan
 Licensed under MIT License
 """
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional, List
 from pathlib import Path
@@ -102,11 +102,14 @@ async def root():
     }
 
 @app.post("/init", response_model=InitResponse)
-async def init_vault(request: VaultRequest):
+async def init_vault(request: Request):
     """Initialize a new LLM-Wiki vault."""
     try:
-        vault_path = request.vault_path
-        template_name = "default"
+        body = await request.json()
+        vault_path = body.get("vault_path", "")
+        template_name = body.get("template_name", "llm-wiki")
+        if template_name == "default":
+            template_name = "llm-wiki"
         
         create_folder_structure(vault_path, template_name)
         create_templates(vault_path)
@@ -118,6 +121,8 @@ async def init_vault(request: VaultRequest):
             folders_created=len(FOLDER_TEMPLATES.get(template_name, {}).get("folders", [])),
             templates_created=1
         )
+    except KeyError as e:
+        raise HTTPException(status_code=400, detail=f"Unknown template: {e}. Available: {list(FOLDER_TEMPLATES.keys())}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
