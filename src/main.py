@@ -11,9 +11,9 @@ sys.path.insert(0, str(project_root / "src"))
 
 from init import show_welcome, create_folder_structure, create_templates, create_index_page, show_plugin_guide
 from note_import import scan_notes, show_import_report, apply_changes
-from link import extract_titles_and_slugs, find_missing_links, detect_isolated_notes, update_index_page
+from link import extract_titles_and_slugs, find_missing_links, detect_isolated_notes, update_index_page, apply_link_updates
 from route import check_local_knowledge, recommend_assistant
-from maintain import find_expired_notes, find_duplicate_titles, find_orphaned_links
+from maintain import find_expired_notes, find_duplicate_titles, find_orphaned_links, archive_expired_notes
 
 
 def cmd_init(vault_path, template):
