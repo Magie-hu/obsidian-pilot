@@ -65,3 +65,42 @@
 .pilot-error {
     color: var(--text-error);
 }
+
+/* Setup modal styles */
+.pilot-cmd-block {
+    background: var(--background-primary-alt);
+    padding: 12px;
+    border-radius: 6px;
+    margin: 12px 0;
+    font-family: var(--font-monospace);
+    font-size: 0.9em;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.pilot-setup-btns {
+    display: flex;
+    gap: 8px;
+}
+
+.pilot-setup-btns button {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--background-modifier-border);
+    background: var(--background-secondary);
+    color: var(--text-normal);
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.pilot-setup-btns button.mod-cta {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+}
+
+.pilot-setup-btns button:hover {
+    opacity: 0.9;
+}

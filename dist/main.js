@@ -25,6 +25,41 @@ __export(main_exports, {
 });
 module.exports = __toCommonJS(main_exports);
 var import_obsidian = require("obsidian");
+var SetupModal = class extends import_obsidian.Modal {
+  constructor(app, actionLabel) {
+    super(app);
+    this.actionLabel = actionLabel;
+  }
+  onOpen() {
+    const { contentEl } = this;
+    const title = contentEl.createEl("h2", { text: "API Backend Required" });
+    title.style.marginBottom = "12px";
+    const body = contentEl.createDiv();
+    body.style.marginBottom = "16px";
+    body.createEl("p", { text: `To use "${this.actionLabel}", Pilot Assistant needs a lightweight API backend.` });
+    body.createEl("p", { text: "Please run these two commands in your terminal:" });
+    const cmdBlock = contentEl.createDiv({ cls: "pilot-cmd-block" });
+    cmdBlock.createEl("code", { text: "pip install obsidian-pilot-api" });
+    cmdBlock.createEl("br");
+    cmdBlock.createEl("code", { text: "obsidian-pilot-api" });
+    const btnRow = contentEl.createDiv({ cls: "pilot-setup-btns" });
+    const copyBtn = btnRow.createEl("button", { text: "Copy Commands" });
+    copyBtn.addClass("mod-cta");
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText("pip install obsidian-pilot-api\nobsidian-pilot-api");
+      copyBtn.setText("\u2713 Copied!");
+      setTimeout(() => copyBtn.setText("Copy Commands"), 2e3);
+    };
+    const guideBtn = btnRow.createEl("button", { text: "View Full Guide" });
+    guideBtn.onclick = () => {
+      window.open("https://github.com/Magie-hu/obsidian-pilot/blob/main/INSTALL.md", "_blank");
+    };
+  }
+  onClose() {
+    const { contentEl } = this;
+    contentEl.empty();
+  }
+};
 var PilotModal = class extends import_obsidian.Modal {
   constructor(app, apiUrl) {
     super(app);
@@ -68,18 +103,7 @@ var PilotModal = class extends import_obsidian.Modal {
           this.showResult(result);
           new import_obsidian.Notice(`\u2705 ${label} completed`);
         } catch (error) {
-          const msg = `API not connected (${this.apiUrl})
-
-Please start the API backend first:
-
-1. Install dependencies: pip install fastapi uvicorn
-2. Start the server:
-   cd obsidian-pilot-api
-   uvicorn obsidian_pilot_api.main:app --port 8080
-
-3. Verify API is running: http://${this.apiUrl}/health`;
-          this.showResult({ error: msg });
-          new import_obsidian.Notice(`\u274C ${label} - Please start the API first`);
+          new SetupModal(this.app, label).open();
         } finally {
           btn.disabled = false;
           btn.setText(label);
