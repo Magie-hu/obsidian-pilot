@@ -1,0 +1,6 @@
+"""Obsidian Pilot API - FastAPI Backend for LLM-Wiki Bridge"""
+__version__ = "0.1.0"
+__author__ = "NingXiaoBan"
+__email__ = "18607570527tong@gmail.com"
+__license__ = "MIT"
+__copyright__ = "Copyright (c) 2026 NingXiaoBan"
