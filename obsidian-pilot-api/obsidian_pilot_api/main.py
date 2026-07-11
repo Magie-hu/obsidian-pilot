@@ -500,6 +500,326 @@ async def run_maintenance(
 
 
 # ---------------------------------------------------------------------------
+# Pro endpoints
+# ---------------------------------------------------------------------------
+
+class TemplateRequest(BaseModel):
+    vault_path: str
+    templates: Optional[list] = None
+    preset: Optional[str] = None
+
+
+class TemplateListResponse(BaseModel):
+    total: int
+    templates: list
+
+
+class TemplateGenerateResponse(BaseModel):
+    status: str
+    generated: int
+    skipped: int
+    errors: list
+
+
+class RepairRequest(BaseModel):
+    vault_path: str
+    batch: bool = False
+    apply: bool = False
+    dry_run: bool = True
+
+
+class RepairResponse(BaseModel):
+    status: str
+    dry_run: bool
+    repairs: list
+    stats: dict
+
+
+class ConflictRequest(BaseModel):
+    vault_path: str
+    resolve: bool = False
+    auto: bool = False
+
+
+class ConflictResponse(BaseModel):
+    total_conflicts: int
+    resolved: int
+    unresolved: int
+    conflicts: list
+    type_counts: dict
+
+
+class ExportRequest(BaseModel):
+    vault_path: str
+    format: str = "zip"
+
+
+class ExportResponse(BaseModel):
+    status: str
+    format: str
+    files: int
+    output: str
+
+
+class SkillExportRequest(BaseModel):
+    vault_path: str
+    output: Optional[str] = None
+
+
+class SkillExportResponse(BaseModel):
+    status: str
+    exported_skills: int
+    output_path: str
+
+
+class LicenseRequest(BaseModel):
+    key: str
+    vault_path: Optional[str] = None
+
+
+class LicenseResponse(BaseModel):
+    valid: bool
+    product: str
+    expires: Optional[str] = None
+    registered: bool = False
+
+
+class LicenseRegisterResponse(BaseModel):
+    status: str
+    valid: bool
+    registered_at: str
+
+
+@app.post("/pro/templates/list", response_model=TemplateListResponse, tags=["pro"])
+async def list_templates(request: VaultRequest):
+    """List available Pro templates."""
+    try:
+        # Lazy load pro module
+        pro_src = Path(__file__).parent.parent.parent.parent / "obsidian-pilot-pro" / "src"
+        if not pro_src.exists():
+            pro_src = Path(__file__).parent.parent / "obsidian-pilot-pro" / "src"
+        if str(pro_src) not in sys.path:
+            sys.path.insert(0, str(pro_src))
+        from templater import list_available_templates
+        templates = list_available_templates()
+        return TemplateListResponse(total=len(templates), templates=templates)
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Pro module not installed")
+    except Exception as e:
+        logger.exception("Failed to list templates")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/pro/templates/generate", response_model=TemplateGenerateResponse, tags=["pro"])
+async def generate_templates(request: TemplateRequest):
+    """Generate Pro Templater templates."""
+    try:
+        pro_src = Path(__file__).parent.parent.parent.parent / "obsidian-pilot-pro" / "src"
+        if not pro_src.exists():
+            pro_src = Path(__file__).parent.parent / "obsidian-pilot-pro" / "src"
+        if str(pro_src) not in sys.path:
+            sys.path.insert(0, str(pro_src))
+        from templater import generate_templates
+        result = generate_templates(request.vault_path, selected=request.templates, preset=request.preset)
+        return TemplateGenerateResponse(
+            status="success",
+            generated=len(result["generated"]),
+            skipped=len(result["skipped"]),
+            errors=result["errors"],
+        )
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Pro module not installed")
+    except Exception as e:
+        logger.exception("Failed to generate templates")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/pro/repair", response_model=RepairResponse, tags=["pro"])
+async def repair_links(request: RepairRequest):
+    """Repair broken links (Pro)."""
+    try:
+        pro_src = Path(__file__).parent.parent.parent.parent / "obsidian-pilot-pro" / "src"
+        if not pro_src.exists():
+            pro_src = Path(__file__).parent.parent / "obsidian-pilot-pro" / "src"
+        if str(pro_src) not in sys.path:
+            sys.path.insert(0, str(pro_src))
+        from repair import LinkRepair
+        repair = LinkRepair(request.vault_path)
+
+        if request.batch:
+            result = repair.batch_repair()
+            return RepairResponse(
+                status="success",
+                dry_run=False,
+                repairs=[],
+                stats={
+                    "repaired": result["repaired"],
+                    "unresolved": result["unresolved"],
+                    "total_links": repair.stats["total_links"],
+                    "broken_links": repair.stats["broken_links"],
+                },
+            )
+        else:
+            result = repair.repair_links(dry_run=request.dry_run)
+            return RepairResponse(
+                status="success",
+                dry_run=request.dry_run,
+                repairs=result["repairs"],
+                stats=result["stats"],
+            )
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Pro module not installed")
+    except Exception as e:
+        logger.exception("Failed to repair links")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/pro/conflict", response_model=ConflictResponse, tags=["pro"])
+async def check_conflicts(request: ConflictRequest):
+    """Detect and optionally resolve conflicts (Pro)."""
+    try:
+        pro_src = Path(__file__).parent.parent.parent.parent / "obsidian-pilot-pro" / "src"
+        if not pro_src.exists():
+            pro_src = Path(__file__).parent.parent / "obsidian-pilot-pro" / "src"
+        if str(pro_src) not in sys.path:
+            sys.path.insert(0, str(pro_src))
+        from conflict import ConflictDetector
+        detector = ConflictDetector(request.vault_path)
+        conflicts = detector.scan_conflicts()
+
+        type_counts = {}
+        for c in conflicts:
+            t = c["type"]
+            type_counts[t] = type_counts.get(t, 0) + 1
+
+        resolved_count = 0
+        if request.resolve:
+            result = detector.resolve_conflicts(auto_resolve=request.auto)
+            resolved_count = result["resolved"]
+
+        return ConflictResponse(
+            total_conflicts=len(conflicts),
+            resolved=resolved_count,
+            unresolved=len(conflicts) - resolved_count,
+            conflicts=conflicts,
+            type_counts=type_counts,
+        )
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Pro module not installed")
+    except Exception as e:
+        logger.exception("Failed to detect conflicts")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/pro/export", response_model=ExportResponse, tags=["pro"])
+async def export_knowledge(request: ExportRequest):
+    """Export knowledge base (Pro)."""
+    try:
+        pro_src = Path(__file__).parent.parent.parent.parent / "obsidian-pilot-pro" / "src"
+        if not pro_src.exists():
+            pro_src = Path(__file__).parent.parent / "obsidian-pilot-pro" / "src"
+        if str(pro_src) not in sys.path:
+            sys.path.insert(0, str(pro_src))
+        from export import KnowledgeBaseExporter
+        exporter = KnowledgeBaseExporter(request.vault_path)
+        result = exporter.export_all(format=request.format)
+
+        return ExportResponse(
+            status="success",
+            format=result["format"],
+            files=result.get("exported_files", 0),
+            output=result.get("zip_path", result.get("output_dir", "N/A")),
+        )
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Pro module not installed")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.exception("Failed to export knowledge base")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/pro/skill-export", response_model=SkillExportResponse, tags=["pro"])
+async def export_skills(request: SkillExportRequest):
+    """Export skills as Hermes skill packages (Pro)."""
+    try:
+        pro_src = Path(__file__).parent.parent.parent.parent / "obsidian-pilot-pro" / "src"
+        if not pro_src.exists():
+            pro_src = Path(__file__).parent.parent / "obsidian-pilot-pro" / "src"
+        if str(pro_src) not in sys.path:
+            sys.path.insert(0, str(pro_src))
+        from skill_pack import SkillPackExporter
+        exporter = SkillPackExporter(request.vault_path, request.output)
+        result = exporter.export_skills()
+        return SkillExportResponse(
+            status="success",
+            exported_skills=result["exported_skills"],
+            output_path=result["output_path"],
+        )
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Pro module not installed")
+    except Exception as e:
+        logger.exception("Failed to export skills")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/pro/license/register", response_model=LicenseRegisterResponse, tags=["pro"])
+async def register_license(request: LicenseRequest):
+    """Register a Pro license key."""
+    try:
+        pro_src = Path(__file__).parent.parent.parent.parent / "obsidian-pilot-pro" / "src"
+        if not pro_src.exists():
+            pro_src = Path(__file__).parent.parent / "obsidian-pilot-pro" / "src"
+        if str(pro_src) not in sys.path:
+            sys.path.insert(0, str(pro_src))
+        from license_check import register_license, LicenseError
+        try:
+            info = register_license(request.vault_path or "/tmp", request.key)
+            return LicenseRegisterResponse(
+                status="success",
+                valid=info["valid"],
+                registered_at=info.get("registered_at", ""),
+            )
+        except LicenseError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Pro module not installed")
+    except Exception as e:
+        logger.exception("Failed to register license")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/pro/license/verify", response_model=LicenseResponse, tags=["pro"])
+async def verify_license_endpoint(request: LicenseRequest):
+    """Verify a Pro license key."""
+    try:
+        pro_src = Path(__file__).parent.parent.parent.parent / "obsidian-pilot-pro" / "src"
+        if not pro_src.exists():
+            pro_src = Path(__file__).parent.parent / "obsidian-pilot-pro" / "src"
+        if str(pro_src) not in sys.path:
+            sys.path.insert(0, str(pro_src))
+        from license_check import verify_license, LicenseError, check_license_installed
+        try:
+            info = verify_license(request.key)
+            registered = False
+            if request.vault_path:
+                registered = check_license_installed(request.vault_path)
+            return LicenseResponse(
+                valid=info["valid"],
+                product=info["product"],
+                expires=info.get("expires"),
+                registered=registered,
+            )
+        except LicenseError as e:
+            return LicenseResponse(valid=False, product="", registered=False)
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Pro module not installed")
+    except Exception as e:
+        logger.exception("Failed to verify license")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
 # CLI entry
 # ---------------------------------------------------------------------------
 
