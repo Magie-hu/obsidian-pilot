@@ -1,2 +1,0 @@
-obsidian_pilot_api
-obsidian_pilot_cli
